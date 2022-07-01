@@ -1,16 +1,27 @@
-import express from "express";
+import { config, parse } from 'dotenv'
 
-const app = express();
+import express from 'express'
+import router from './app/routes'
+import { test } from './app/models/container';
+
+const dotenv = config()
+const app = express()
+const PORT = process.env.PORT
 
 
 
-const PORT = 8080;
 
 
+app.use(router)
+app.use(test, () => { 
+	test()
+		
+ })
 
-app.use(`${__dirname}/src/app/routes` )
-
+ app.get('/', (req, res) => {
+	res.send('Holaa')
+ })
 
 app.listen(PORT, () => {
- console.log(`conectado al puerto: ${PORT}`);
-});
+	console.log(`Conectado al puerto d: ${PORT}`)
+})
