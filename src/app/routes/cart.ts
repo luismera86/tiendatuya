@@ -1,4 +1,4 @@
-import { addProductIdCart, createCart, deleteProductCart, emptyCart, getCartProducts } from "../controllers/cart";
+import { addProductIdCart, createCart, deleteCart, deleteProductCart, getCartProducts } from "../controllers/cart";
 
 import { Router } from "express";
 
@@ -8,7 +8,7 @@ const path = 'carrito'
 
 routeCart.post(`/${path}`, createCart)
 
-routeCart.delete(`/${path}/:id`, emptyCart)
+routeCart.delete(`/${path}/:id`, deleteCart)
 
 routeCart.get(`/${path}/:id/productos`, getCartProducts)
 

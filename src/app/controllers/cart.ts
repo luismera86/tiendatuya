@@ -38,7 +38,7 @@ const createCart = (req: Request, resp: Response) => {
 	}
 }
 
-const emptyCart = (req: Request, resp: Response) => {
+const deleteCart = (req: Request, resp: Response) => {
 	try {
 
 		const idCart = Number(req.params.id)
@@ -73,7 +73,7 @@ const deleteProductCart = (req: Request, resp: Response) => {}
 
 export {
 	createCart,
-	emptyCart,
+	deleteCart,
 	getCartProducts,
 	addProductIdCart,
 	deleteProductCart,
