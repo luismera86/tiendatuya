@@ -1,20 +1,22 @@
+import { Request, Response } from "express"
+
 const products = []
 
-const getProduct = () => { 
+const getProduct = (req: Request, resp: Response) => { 
+   
+ }
+
+
+const addProduct = (req: Request, resp: Response) => { 
 
  }
 
 
-const addProduct = () => { 
+const modifyProduct = (req: Request, resp: Response) => { 
 
  }
 
-
-const modifyProduct = () => { 
-
- }
-
-const deleteProduct = () => { 
+const deleteProduct = (req: Request, resp: Response) => { 
 
 
  }

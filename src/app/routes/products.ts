@@ -1,11 +1,10 @@
 import { addProduct, deleteProduct, getProduct, modifyProduct } from "../controllers/products";
 
 import { Router } from "express";
-import express from 'express';
 
 const routeProducts = Router()
 
-const path = 'api/productos'
+const path = 'productos'
 
 routeProducts.get(`/${path}/:id?`, getProduct)
 

@@ -9,8 +9,3 @@ export interface Product {
     stock: number
 }
 
-export interface Cart {
-    id?: number,
-    timestamp: number,
-    products: Product
-}

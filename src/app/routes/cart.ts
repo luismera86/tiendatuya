@@ -4,7 +4,7 @@ import { Router } from "express";
 
 const routeCart = Router()
 
-const path = 'api/carrito'
+const path = 'carrito'
 
 routeCart.post(`/${path}`, createCart)
 
