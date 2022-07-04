@@ -5,28 +5,46 @@ import { Product } from "../../interfaces"
 
 const productsToJson = new Container
 
-export const products: Product[] = []
+const insertProducts = () => { 
+
+   productsToJson.readProducts()
+   .then( resp => {
+
+      if ( resp ) {
+         products.push(resp)
+      }
+      
+   })
+
+   console.log(' aqui abajos los productos')
+   console.log(products)
+
+ }
+
+ insertProducts()
+
+
+
+
+export let products: Product[] = []
+
+
 
 const getProducts = (req: Request, resp: Response) => { 
 
-   productsToJson.readProducts()
-      .then(products => {
-         resp.json(products)
-      })
-
+   
   
    
 }
 
 const getProduct = (req: Request, resp: Response) => { 
 
-      resp.json(products)
-   
+      
  }
 
 
 const addProduct = (req: Request, resp: Response) => { 
-         console.log('Entrando en productos')
+         
    try {
       let i = Date.now()
       let newId = i * 3
@@ -43,21 +61,10 @@ const addProduct = (req: Request, resp: Response) => {
          stock: 2
       }
 
-    /*   const newProduct: Product = {
-         id: id,
-         timestamp: Date.now(),
-         name: name,
-         description: description,
-         code: code,
-         thumbnail: thumbnail,
-         price: price,
-         stock: stock
-      }
- */
+    
       products.push(newProduct)
 
-      console.log(newProduct)
-      /* products.push({id, timestamp, name, description, code, thumbnail, price, stock}) */
+     
 
       productsToJson.addProduct(products)
 

@@ -26,9 +26,9 @@ export class Container {
 	async readProducts() {
 
 		try {
-			let data = await fs.promises.readFile('./src/data/products.json', 'utf-8')
+			let data: any = await fs.promises.readFile('./src/data/products.json', 'utf-8')
 			data = JSON.parse(data)
-			
+
 			return data
 
 			

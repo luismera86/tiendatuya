@@ -1,5 +1,5 @@
 export interface Product {
-    id?: number,
+    id: number,
     timestamp: number, 
     name: string,
     description: string,

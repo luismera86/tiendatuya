@@ -10,7 +10,7 @@ routeCart.post(`/${path}`, createCart)
 
 routeCart.delete(`/${path}/:id`, deleteCart)
 
-routeCart.get(`/${path}/productos`, getCartProducts)
+routeCart.get(`/${path}/:id/productos`, getCartProducts)
 
 routeCart.post(`/${path}/:id/productos`, addProductIdCart)
 
