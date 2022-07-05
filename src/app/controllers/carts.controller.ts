@@ -1,42 +1,59 @@
 import { Cart, Product } from '../../interfaces'
 import { Request, Response } from 'express'
-import { addProduct, products } from './products.controller'
+import { addProduct, getProducts, products } from './products.controller'
 
 import { Container } from '../models/container'
 
 const saveCartToJson = new Container()
 
-
-
 let carts: Cart[] = []
+
+const insertCarts = () => {
+
+	
+
+	saveCartToJson.readCarts().then(resp => {		
+
+			carts = resp
+			if ( carts === undefined) {
+				let i = Date.now()
+				let newId = i * 3
+				carts = [{
+					id: newId,
+					timestamp: Date.now(),
+					products: []
+				}]
+			}
+
+		console.log(carts)
+	})
+}
+
+insertCarts()
+
+
 
 const createCart = (req: Request, resp: Response) => {
 	try {
-		if (carts.length === 0) {
-			const newCart: Cart = {
-				id: 1,
-				timestamp: Date.now(),
-				products: []
-			}
-			carts.push(newCart)
-
-			saveCartToJson.addCart(carts)
-
-			resp.status(201).send('Carrito creado con éxito')
-		} else {
-			const idSuma = carts[carts.length - 1].id
-			const newId = idSuma + 1
-			const newCart = {
-				id: newId,
-				timestamp: Date.now(),
-				products: []
-			}
-			carts.push(newCart)
-
-			saveCartToJson.addCart(carts)
-
-			resp.status(201).send('Carrito creado con éxito')
+		let i = Date.now()
+		let newId = i * 3
+		const newCart: Cart = {
+			id: newId,
+			timestamp: Date.now(),
+			products: [],
 		}
+
+		
+			carts.push(newCart)
+		
+		
+
+		saveCartToJson.addCart(carts)
+		
+
+		console.log(carts)
+
+		resp.status(201).send('Carrito creado con éxito')
 	} catch (error) {
 		console.log(`Lo sentimos hubo un error ${error}`)
 	}
@@ -48,11 +65,9 @@ const deleteCart = (req: Request, resp: Response) => {
 		const checkCart = carts.some(cart => cart.id === idCart)
 
 		if (checkCart) {
-			const newCart = carts.filter(cart => cart.id !== idCart)
-			carts = newCart
-			const saveCartToJson = new Container()
-			saveCartToJson.addCart(newCart)
-
+			const newCarts = carts.filter(cart => cart.id !== idCart)
+			carts = newCarts
+			saveCartToJson.addCart(newCarts)
 			resp.status(200).send('Carrito eliminado con éxito')
 		} else {
 			resp.status(503).send('No se pudo encontrar el carrito')
@@ -64,78 +79,52 @@ const deleteCart = (req: Request, resp: Response) => {
 
 const getCartProducts = (req: Request, resp: Response) => {
 	try {
-		
 		const idCartParams = Number(req.params.id)
-		const cartProducts = carts.find( c => {
-			if ( c.id === idCartParams ) {
-
+		const cartProducts = carts.find(c => {
+			if (c.id === idCartParams) {
 				return c.products
 			}
 		})
 
 		resp.status(200).send(cartProducts)
-
-
 	} catch (error) {
-
 		console.log(`Lo sentimos hubo un error ${error}`)
-		
 	}
-
-
 }
 
 const addProductIdCart = async (req: Request, resp: Response) => {
-	
-
 	try {
 		const idCartParams = Number(req.params.id) // Parámetro que recibimos del carrito
 		const idProduct = Number(req.body.id) // Id del producto obtenido por postman
-		const productAdd: any = products.find(p => p.id === idProduct)// Obtenemos el producto
-		
+
+		const productAdd: Product = products.find(p => p.id === idProduct)! // Obtenemos el producto
+		console.log(productAdd)
+	
 		const cartIndex = carts.findIndex(cart => cart.id === idCartParams) // Obtenemos el indice del array donde está el carrito
 
-		const insertProductInCart = carts.forEach(c => {
-			if (c.id === idCartParams) {
+		carts[cartIndex].products.push(productAdd)
 
-			/* 	carts[cartIndex].products.forEach( p => {
-					if ( productAdd ) {
-						p = productAdd
-					} else if ( c.products.length && productAdd ) {
-						let pr = carts[cartIndex].products.map( p => p)
-						p = [...pr]
-					}
-				}) */
-
-				if ( c.products && productAdd) {
-					let products = carts[cartIndex].products
-					carts[cartIndex].products = [...[products], productAdd]
-				} else if( productAdd ){
-					carts[cartIndex].products = productAdd
-				} 
-
-			
-
-			/* carts[cartIndex] = {
-					id: idCartParams,
-					timestamp: c.timestamp,
-					products: productAdd
-				}  */
-			}
-
-			console.log( carts )
-		})
+		console.log('Este son los carts después de cargar el producto')
+		console.log(carts)
 
 		resp.status(201).send('Producto agregado al carrito con éxito')
-
-	
 	} catch (error) {
 		console.log(`Lo sentimos hubo un error ${error}`)
 	}
-	
 }
 
-const deleteProductCart = (req: Request, resp: Response) => {}
+const deleteProductCart = (req: Request, resp: Response) => {
+
+		const idCartParams = Number(req.params.id) // Parámetro que recibimos del carrito
+		const idProduct = Number(req.params.id) // Id del producto obtenido por postman
+		const cartIndex = carts.findIndex(cart => cart.id === idCartParams)
+		const productIndexCart = carts[cartIndex].products.findIndex( p => p.id === idProduct) // Obtenemos el indice del array de productos del carrito 
+		carts[cartIndex].products.slice(productIndexCart, 1)
+		
+
+
+
+}
 
 export {
 	createCart,

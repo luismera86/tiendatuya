@@ -1,4 +1,4 @@
-import { addProduct, deleteProduct, getProduct, getProducts, modifyProduct } from "../controllers/products.controller";
+import { addProduct, deleteProduct, getProductId, getProducts, modifyProduct } from "../controllers/products.controller";
 
 import { Router } from "express";
 
@@ -8,7 +8,7 @@ const path = 'productos'
 
 routeProducts.get(`/${path}`, getProducts)
 
-routeProducts.get(`/${path}/:id?`, getProduct)
+routeProducts.get(`/${path}/:id?`, getProductId)
 
 routeProducts.post(`/${path}`, addProduct)
 

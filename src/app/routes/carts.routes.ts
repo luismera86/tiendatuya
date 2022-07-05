@@ -14,6 +14,6 @@ routeCart.get(`/${path}/:id/productos`, getCartProducts)
 
 routeCart.post(`/${path}/:id/productos`, addProductIdCart)
 
-routeCart.delete(`/${path}/:id/productos/id_prod`, deleteProductCart)
+routeCart.delete(`/${path}/:id/productos/:id_prod`, deleteProductCart)
 
 export = routeCart 
