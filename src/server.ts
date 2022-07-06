@@ -1,8 +1,6 @@
-import { config, parse } from 'dotenv'
-
+import { config } from 'dotenv'
 import express from 'express'
-import router from './app/routes'
-import { test } from './app/models/container';
+import router from './app/routes/index.routes'
 
 const dotenv = config()
 const app = express()
@@ -11,17 +9,12 @@ const PORT = process.env.PORT
 
 
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use('/api', router)
 
-app.use(router)
-app.use(test, () => { 
-	test()
-		
- })
 
- app.get('/', (req, res) => {
-	res.send('Holaa')
- })
 
 app.listen(PORT, () => {
-	console.log(`Conectado al puerto d: ${PORT}`)
+	console.log(`Conectado al puerto : ${PORT}`)
 })
