@@ -26,9 +26,10 @@ const getProducts = (req: Request, resp: Response) => {
 const getProductId = (req: Request, resp: Response) => {
 	try {
 		const idProduct = Number(req.params.id)
-		const productIndex = products.findIndex(p => p.id === idProduct)
+		const checkProduct = products.some(p => p.id === idProduct)
+		
 
-		if (products[productIndex].id === idProduct) {
+		if (checkProduct) {
 			const productView = products.find(p => p.id === idProduct)
 
 			resp.status(200).json(productView)

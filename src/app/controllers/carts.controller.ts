@@ -122,20 +122,26 @@ const deleteProductCart = (req: Request, resp: Response) => {
 
 		const checkCart = carts.some(c => c.id === idCartParams)
 		const checkProduct = products.some(p => p.id === idProduct)
-
-		if (checkCart && checkProduct) {
-			if (carts[cartIndex].products[productIndexCart].id === idProduct) {
+		if ( checkCart && checkProduct) {
+			
+			const checkCartProduct = carts[cartIndex].products.some( p => p.id === idProduct)	
+			
+			if ( checkCartProduct ) {
+				
 				carts[cartIndex].products.splice(productIndexCart, 1)
-
+				
 				saveCartToJson.addCart(carts)
-
+				
 				resp.status(200).send('Producto del carrito eliminado con éxito')
+			} else {
+				resp.status(400).send('Lo sentimos no pudimos encontrar el producto')
 			}
 		} else {
-			resp.status(404).send('Lo sentimos no pudimos encontrar el producto')
+			resp.status(400).send('El ID del carrito o del Producto no existen')
 		}
+		
 	} catch (error) {
-
+		
 		console.log(`Lo sentimos hubo un error ${error}`)
 	}
 }
