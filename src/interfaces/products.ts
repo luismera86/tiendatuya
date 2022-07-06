@@ -1,5 +1,5 @@
 export interface Product {
-    id?: number,
+    id: number,
     timestamp: number, 
     name: string,
     description: string,
@@ -9,8 +9,3 @@ export interface Product {
     stock: number
 }
 
-export interface Cart {
-    id?: number,
-    timestamp: number,
-    products: Product
-}
