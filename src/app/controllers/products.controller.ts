@@ -1,148 +1,181 @@
-import { Request, Response } from "express"
+import { Request, Response } from 'express'
 
-import { Container } from "../models/container"
-import { Product } from "../../interfaces"
+import { Container } from '../models/container'
+import { Product } from '../../interfaces'
 
 export let products: Product[] = []
 
-console.log(products)
-const productsToJson = new Container
+const productsToJson = new Container()
 
-const insertProducts = () => { 
-
-   productsToJson.readProducts()
-   .then( resp => {
-         products = resp
-
-   })
-
-  
-
- }
-
- insertProducts()
-
- console.log(products)
-
-
-
-
-
-
-
-
-const getProducts = (req: Request, resp: Response) => { 
-
-      resp.status(200).json(products)
-
-   
-  
-   
+const insertProducts = () => {
+	productsToJson.readProducts().then(resp => {
+		products = resp
+	})
 }
 
-const getProductId = (req: Request, resp: Response) => { 
-      const idProduct = Number(req.params.id)
-      const productView = products.find( p => p.id === idProduct)
-      resp.status(200).json(productView)
+insertProducts()
 
-      
- }
+const getProducts = (req: Request, resp: Response) => {
+	try {
+		resp.status(200).json(products)
+	} catch (error) {
+		console.log(`Lo sentimos hubo un error ${error}`)
+	}
+}
 
+const getProductId = (req: Request, resp: Response) => {
+	try {
+		const idProduct = Number(req.params.id)
+		const productIndex = products.findIndex(p => p.id === idProduct)
 
-const addProduct = (req: Request, resp: Response) => { 
-         
-   try {
-      let i = Date.now()
-      let newId = i * 3
-      const {id, name, description, code, thumbnail, price, stock} = req.body
+		if (products[productIndex].id === idProduct) {
+			const productView = products.find(p => p.id === idProduct)
 
-      if ( products === undefined ) {
-         products = [
-            {
-               id: newId,
-               timestamp: Date.now(),
-               name: 'Auto',
-               description: 'Es un auto',
-               code: 1155,
-               thumbnail: 'url',
-               price: 3242,
-               stock: 2
-            }
-         ]
+			resp.status(200).json(productView)
+		} else {
+			resp.status(400).send('No se pudo encontrar el producto')
+		}
+	} catch (error) {
+		console.log(`Lo sentimos hubo un error ${error}`)
+	}
+}
 
-         
+const addProduct = (req: Request, resp: Response) => {
+	try {
+		let i = Date.now()
+		let newId = i * 3
+		let newCode = (i * 5) / 2
 
-      } else {
-         const newProduct: Product = {
-            id: newId,
-            timestamp: Date.now(),
-            name: 'moto',
-            description: 'Es un auto',
-            code: 1155,
-            thumbnail: 'url',
-            price: 3242,
-            stock: 2
-         }
+		const { name, description, thumbnail, price, stock } = req.body
 
-         products.push(newProduct)
-      }
-     
+		if (
+			name &&
+			description &&
+			isNaN(thumbnail) &&
+			Number(price) &&
+			Number(stock)
+		) {
+			if (products === undefined) {
+				products = [
+					{
+						id: newId,
+						timestamp: Date.now(),
+						name: name,
+						description: description,
+						code: newCode,
+						thumbnail: thumbnail,
+						price: price,
+						stock: stock,
+					},
+				]
 
-      productsToJson.addProduct(products)
+				productsToJson.addProduct(products)
+			} else {
+				const newProduct: Product = {
+					id: newId,
+					timestamp: Date.now(),
+					name: name,
+					description: description,
+					code: newCode,
+					thumbnail: thumbnail,
+					price: price,
+					stock: stock,
+				}
 
-      console.log('Producto agregado')
-      console.log(products)
+				products.push(newProduct)
+			}
 
-      resp.status(201).send('Producto agregado con éxito')
-      
-   } catch (error) {
+			productsToJson.addProduct(products)
 
-      console.log(`Lo sentimos hubo un error ${error}`)
-      
-   }
+			resp.status(201).send('Producto agregado con éxito')
+		} else {
+			resp.status(400).json({
+				msg: 'No se pudo cargar el producto, debe tener las siguientes propiedades',
+				name: 'Nombre del Producto',
+				description: 'Descripción del producto',
+				thumbnail: 'Dirección url de la imagen del producto',
+				price: 'El precio el producto en valor numérico',
+				stock: 'La cantidad de sock en valor numérico',
+			})
+		}
+	} catch (error) {
+		console.log(`Lo sentimos hubo un error ${error}`)
+	}
+}
 
- }
+const modifyProduct = (req: Request, resp: Response) => {
+	try {
+		const idProduct = Number(req.params.id)
+		const productIndex = products.findIndex(p => p.id === idProduct)
+		const checkProduct = products.some(p => p.id === idProduct)
 
+		const { name, description, code, thumbnail, price, stock } = req.body
 
-const modifyProduct = (req: Request, resp: Response) => { 
+		if (
+			name &&
+			description &&
+			isNaN(thumbnail) &&
+			Number(price) &&
+			Number(stock) &&
+			checkProduct
+		) {
+			// Esta es la única forma que se me ocurrió para validar los datos que lleguen de postman que se introduzcan con el tipa que corresponde cada propiedad, el productIndex === -1 es por que si pones mal el id en el parámetro el findIndex() devuelve el valor -1 y te genera un nuevo objeto que no entra en el array de products
 
-   const idProduct = Number(req.params.id)
-   const productIndex = products.findIndex( p => p.id === idProduct)
-   const { name, description, code, thumbnail, price, stock} = req.body
-   const productModify: Product = {
-      id: idProduct,
-      timestamp: Date.now(),
-      name: name,
-      description: description,
-      code: code,
-      thumbnail: thumbnail,
-      price: price,
-      stock: stock
+			const productModify: Product = {
+				id: idProduct,
+				timestamp: Date.now(),
+				name: name,
+				description: description,
+				code: code,
+				thumbnail: thumbnail,
+				price: price,
+				stock: stock,
+			}
 
-   }
+			products[productIndex] = productModify
 
-   products[productIndex] = productModify
+			productsToJson.addProduct(products)
 
-      
- }
+			resp.status(200).send('Producto modificado con éxito')
+		} else {
+			if (!checkProduct) {
+				resp
+					.status(400)
+					.send(`No se encuentra el producto con el id: ${idProduct}`)
+			} else {
+				resp.status(400).json({
+					msg: 'No se pudo modificar el producto, debe tener las siguientes propiedades',
+					name: 'Nombre del Producto',
+					description: 'Descripción del producto',
+					thumbnail: 'Dirección url de la imagen del producto',
+					price: 'El precio el producto en valor numérico',
+					stock: 'La cantidad de sock en valor numérico',
+				})
+			}
+		}
+	} catch (error) {
+		console.log(`Lo sentimos hubo un error ${error}`)
+	}
+}
 
-const deleteProduct = (req: Request, resp: Response) => { 
+const deleteProduct = (req: Request, resp: Response) => {
+	try {
+		const idProduct = Number(req.params.id)
+		const newProducts = products.filter(p => p.id !== idProduct)
+		const checkProduct = products.some(p => p.id === idProduct)
 
-   const idProduct = Number(req.params.id)
-   const newProducts = products.filter( p => p.id !== idProduct)
-   products = newProducts
+		if (checkProduct) {
+			products = newProducts
 
-   
+			productsToJson.addProduct(products)
 
+			resp.status(200).send(`Producto con el id: ${idProduct} fue eliminado`)
+		} else {
+			resp.status(400).send('No se encuentra el producto')
+		}
+	} catch (error) {
+		console.log(`Lo sentimos hubo un error ${error}`)
+	}
+}
 
-      
-
- }
-
- export {
-    getProductId,
-    addProduct,
-    modifyProduct,
-    deleteProduct,
-    getProducts
- }
+export { getProductId, addProduct, modifyProduct, deleteProduct, getProducts }
